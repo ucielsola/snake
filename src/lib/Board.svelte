@@ -1,0 +1,133 @@
+<script lang="ts">
+	import { fade } from 'svelte/transition';
+	import { app } from './appState.svelte';
+	import DeadSnake from './icons/DeadSnake.svelte';
+	import SlowPotion from './icons/SlowPotion.svelte';
+	import SpeedPotion from './icons/SpeedPotion.svelte';
+	import { Direction, FoodType, GameStatus, type Position } from './types';
+
+	let {
+		availableHeight,
+		availableWidth
+	}: {
+		availableHeight: number;
+		availableWidth: number;
+	} = $props();
+
+	let board: string[][] = createBoard();
+
+	const { game } = app;
+
+	game.setBoardSize({
+		x: board.length,
+		y: board[0].length
+	});
+
+	let lastDirection: Direction = $derived(game.lastDirection);
+
+	let boardElements: {
+		snake: {
+			head: Position;
+			body: Position[];
+		};
+		slowPotion?: Position;
+		fastPotion?: Position;
+		apples: Position[];
+	} = $derived({
+		snake: {
+			head: game.snake.position.head,
+			body: game.snake.position.body
+		},
+		slowPotion: undefined,
+		fastPotion: undefined,
+		apples: game.food.filter((f) => f.type === FoodType.Apple).map((f) => f.position)
+	});
+
+	function createBoard() {
+		const cellPx = 24;
+
+		let columns = Math.round(availableWidth / cellPx);
+		let rows = Math.round(availableHeight / cellPx);
+
+		if (columns % 2 !== 0) {
+			columns--;
+		}
+
+		if (rows % 2 !== 0) {
+			rows--;
+		}
+
+		return Array.from({ length: columns }, () => Array(rows).fill(' '));
+	}
+</script>
+
+<div class="flex h-full w-full items-center justify-center">
+	<div class="flex border">
+		{#each board as col, collIdx (collIdx)}
+			<div class="flex flex-col">
+				{#each col as _, cellIdx (cellIdx)}
+					<div class="h-6 w-6 border {(collIdx + cellIdx) % 2 === 0 && 'bg-slate-50'}">
+						{#if boardElements.snake.head.x === collIdx && boardElements.snake.head.y === cellIdx}
+							{@render SnakeHeadCell()}
+						{:else if boardElements.snake.body.some((b) => b.x === collIdx && b.y === cellIdx)}
+							{@render SnakeBodyCell()}
+						{:else if !!boardElements.apples.find((b) => b.x === collIdx && b.y === cellIdx)}
+							{@render AppleCell()}
+						{:else if boardElements.slowPotion && boardElements.slowPotion.x === collIdx && boardElements.slowPotion.y === cellIdx}
+							{@render SlowPotionCell()}
+						{:else if boardElements.fastPotion && boardElements.fastPotion.x === collIdx && boardElements.fastPotion.y === cellIdx}
+							{@render FastPotionCell()}
+						{:else}
+							{@render EmptyCell()}
+						{/if}
+					</div>
+				{/each}
+			</div>
+		{/each}
+	</div>
+</div>
+
+{#snippet EmptyCell()}
+	<div class="flex h-full w-full items-center justify-center"></div>
+{/snippet}
+
+{#snippet SnakeHeadCell()}
+	<div class="flex h-full w-full items-center justify-center p-0.5">
+		<div
+			class="flex h-full w-full items-center justify-center rounded-t-xl
+		{game.status === GameStatus.Lost ? 'bg-red-400' : 'bg-green-400'}	
+		{lastDirection === Direction.Right && 'rotate-90'}
+		{lastDirection === Direction.Down && 'rotate-180'}
+	    {lastDirection === Direction.Left && 'rotate-270'}
+		"
+		>
+			{#if game.status !== GameStatus.Lost}
+				<div class="h-4 w-4">
+					<DeadSnake />
+				</div>
+			{/if}
+		</div>
+	</div>
+{/snippet}
+
+{#snippet SnakeBodyCell()}
+	<div class="flex h-full w-full items-center justify-center p-0.5">
+		<div
+			class="h-full w-full
+		{game.status === GameStatus.Lost ? 'bg-red-400' : 'bg-green-400'}	
+		"
+		></div>
+	</div>
+{/snippet}
+
+{#snippet AppleCell()}
+	<div class="flex h-full w-full items-center justify-center" in:fade>🍎</div>
+{/snippet}
+
+{#snippet SlowPotionCell()}
+	<div class="flex h-full w-full items-center justify-center"><SlowPotion /></div>
+{/snippet}
+
+{#snippet FastPotionCell()}
+	<div class="flex h-full w-full items-center justify-center"><SpeedPotion /></div>
+{/snippet}
