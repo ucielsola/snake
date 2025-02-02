@@ -50,13 +50,17 @@ export class Game {
         return this.#snake.position;
     }
 
-    start() {
-        this.#status = GameStatus.Playing;
-
-        this.gameLoop()
-    }
-
     play() {
+        if ([GameStatus.Won, GameStatus.Lost, GameStatus.Playing].includes(this.#status)) return;
+
+        if (this.#status === GameStatus.NotStarted) {
+            if (!this.#lastDirection) {
+                this.#lastDirection = Direction.Up
+            }
+
+            this.gameLoop()
+        }
+
         this.#status = GameStatus.Playing;
     }
 
@@ -75,10 +79,8 @@ export class Game {
 
     changeSnakeDirection(direction: Direction) {
         if (this.#status === GameStatus.NotStarted) {
-            this.start();
+            this.play();
         }
-
-
 
         const horizontals = [Direction.Left, Direction.Right]
         const verticals = [Direction.Up, Direction.Down]

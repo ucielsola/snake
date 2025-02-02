@@ -62,7 +62,11 @@
 </script>
 
 <div class="flex h-full w-full items-center justify-center">
-	<div class="flex border">
+	<div
+		class="flex border {gameInstance.status === GameStatus.Lost
+			? 'border-red-400'
+			: 'border-slate-200'}"
+	>
 		{#each board as col, collIdx (collIdx)}
 			<div class="flex flex-col">
 				{#each col as _, cellIdx (cellIdx)}

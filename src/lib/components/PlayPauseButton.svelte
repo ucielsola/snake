@@ -23,7 +23,7 @@
 
 <svelte:window onkeydown={onKeydown} />
 
-<BaseButton onPress={() => (isPlay ? onPause() : onPlay())} disabled={!isPause && !isPlay}>
+<BaseButton onPress={() => (isPlay ? onPause() : onPlay())}>
 	{#if isPlay}
 		<IconPause />
 	{:else}

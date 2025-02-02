@@ -5,7 +5,7 @@
 		onPress: () => void;
 		onRelease?: () => void;
 		children: Snippet;
-		disabled: boolean;
+		disabled?: boolean;
 	};
 
 	let { onPress, onRelease, children, disabled }: BaseButtonProps = $props();
@@ -29,7 +29,7 @@
 	onmouseup={handleRelease}
 	ontouchstart={handlePress}
 	ontouchend={handleRelease}
-	{disabled}
+	disabled={disabled ?? false}
 >
 	<div
 		class="flex h-16 w-16 items-center justify-center rounded-lg border border-slate-200 inset-shadow-sm transition-colors duration-150 {pressed
