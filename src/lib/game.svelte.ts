@@ -14,6 +14,7 @@ export class Game {
     #lastMoveTime = performance.now();
     #gameInitTime = performance.now();
     #lastDirection: Direction = $state(null!);
+    #directionChanged: boolean = false;
 
     constructor() {
         this.#snake = new Snake();
@@ -73,6 +74,8 @@ export class Game {
             this.start();
         }
 
+
+
         const horizontals = [Direction.Left, Direction.Right]
         const verticals = [Direction.Up, Direction.Down]
 
@@ -83,8 +86,8 @@ export class Game {
             [Direction.Right]: verticals,
         }
 
-        if (this.#lastDirection && !allowedDirection[this.#lastDirection].includes(direction)) return;
-
+        if (this.#directionChanged || this.#lastDirection && !allowedDirection[this.#lastDirection].includes(direction)) return;
+        this.#directionChanged = true;
         this.#lastDirection = direction;
     }
 
@@ -170,8 +173,9 @@ export class Game {
     private gameLoop() {
         if (this.#status === GameStatus.Playing) {
             const BASE_SPEED = 500
-            let speedMultiplier = this.#snake.position.body.length + 0.5
+
             const currentTime = performance.now();
+            const speedMultiplier = 1 + Math.log(this.#snake.position.body.length + 1);
             const timeElapsed = currentTime - this.#lastMoveTime;
             const appleLimit = 3;
             const potionLimit = 1;
@@ -183,6 +187,7 @@ export class Game {
 
             if (timeElapsed >= BASE_SPEED / speedMultiplier) {
                 this.#snake.move(this.#lastDirection)
+                this.#directionChanged = false;
                 this.#lastMoveTime = currentTime;
             }
 
