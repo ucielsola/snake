@@ -4,6 +4,7 @@
 	import DirectionKeyIcon from '$lib/icons/DirectionKeyIcon.svelte';
 
 	import { app } from './appState.svelte';
+	import BaseButton from './BaseButton.svelte';
 
 	const { game } = app;
 
@@ -50,29 +51,35 @@
 </script>
 
 <svelte:window onkeydown={handleKeyDown} onkeyup={handleRelease} />
-
 <div class="flex flex-col items-center gap-2">
-	{@render Key(Direction.Up)}
+	<BaseButton
+		onPress={() => handleClick(Direction.Up)}
+		onRelease={() => handleRelease()}
+		disabled={false}
+	>
+		<DirectionKeyIcon key={Direction.Up} />
+	</BaseButton>
 	<div class="flex items-center gap-2">
-		{@render Key(Direction.Left)}
-		{@render Key(Direction.Down)}
-		{@render Key(Direction.Right)}
+		<BaseButton
+			onPress={() => handleClick(Direction.Left)}
+			onRelease={() => handleRelease()}
+			disabled={false}
+		>
+			<DirectionKeyIcon key={Direction.Left} />
+		</BaseButton>
+		<BaseButton
+			onPress={() => handleClick(Direction.Down)}
+			onRelease={() => handleRelease()}
+			disabled={false}
+		>
+			<DirectionKeyIcon key={Direction.Down} />
+		</BaseButton>
+		<BaseButton
+			onPress={() => handleClick(Direction.Right)}
+			onRelease={() => handleRelease()}
+			disabled={false}
+		>
+			<DirectionKeyIcon key={Direction.Right} />
+		</BaseButton>
 	</div>
 </div>
-
-{#snippet Key(key: Direction)}
-	<button
-		class="cursor-pointer rounded-lg shadow {currentDirection === key && 'scale-95'}"
-		onmousedown={() => handleClick(key)}
-		onmouseup={() => handleRelease()}
-		ontouchstart={() => handleClick(key)}
-		ontouchend={() => handleRelease()}
-	>
-		<div
-			class="flex h-16 w-16 items-center justify-center rounded-lg border border-slate-200 inset-shadow-sm transition-colors duration-150
-			{currentDirection === key && 'bg-slate-100'}"
-		>
-			<DirectionKeyIcon {key} />
-		</div>
-	</button>
-{/snippet}
