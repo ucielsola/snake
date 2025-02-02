@@ -1,4 +1,4 @@
-import type { Direction, Food, Position, } from "./types";
+import { Direction, type Food, type Position, } from "./types";
 import { FoodType, GameStatus, CollisionType } from "./types";
 
 import { Snake } from "./snake.svelte";
@@ -51,6 +51,10 @@ export class Game {
         this.gameLoop()
     }
 
+    play() {
+        this.#status = GameStatus.Playing;
+    }
+
     pause() {
         this.#status = GameStatus.Paused;
     }
@@ -68,6 +72,18 @@ export class Game {
         if (this.#status === GameStatus.NotStarted) {
             this.start();
         }
+
+        const horizontals = [Direction.Left, Direction.Right]
+        const verticals = [Direction.Up, Direction.Down]
+
+        const allowedDirection = {
+            [Direction.Up]: horizontals,
+            [Direction.Down]: horizontals,
+            [Direction.Left]: verticals,
+            [Direction.Right]: verticals,
+        }
+
+        if (this.#lastDirection && !allowedDirection[this.#lastDirection].includes(direction)) return;
 
         this.#lastDirection = direction;
     }
@@ -115,7 +131,6 @@ export class Game {
         for (const food of this.#food) {
             if (isSamePosition(food.position, this.#snake.position.head)) {
                 foodType = food.type
-                break
             } else {
                 newFoodList.push(food)
             }
@@ -153,27 +168,39 @@ export class Game {
     }
 
     private gameLoop() {
-        const BASE_SPEED = 500
-        const speedMultiplier = 1
-        const currentTime = performance.now();
-        const timeElapsed = currentTime - this.#lastMoveTime;
-        const appleLimit = 3;
-
         if (this.#status === GameStatus.Playing) {
-            this.#time = Math.floor((currentTime - this.#gameInitTime) / 1000);
+            const BASE_SPEED = 500
+            let speedMultiplier = this.#snake.position.body.length + 0.5
+            const currentTime = performance.now();
+            const timeElapsed = currentTime - this.#lastMoveTime;
+            const appleLimit = 3;
+            const potionLimit = 1;
+            const poisonLimit = 1;
+
+            if (this.#status === GameStatus.Playing) {
+                this.#time = Math.floor((currentTime - this.#gameInitTime) / 1000);
+            }
+
+            if (timeElapsed >= BASE_SPEED / speedMultiplier) {
+                this.#snake.move(this.#lastDirection)
+                this.#lastMoveTime = currentTime;
+            }
+
+            if (Math.round(Math.random()) && this.#food.length < appleLimit) {
+                this.#food.push({
+                    type: FoodType.Apple,
+                    position: this.getRandomFreePosition(),
+                })
+            }
+
+            if (Math.round(Math.random()) && this.#food.length < potionLimit) {
+                this.#food.push({
+                    type: FoodType.FastPotion,
+                    position: this.getRandomFreePosition(),
+                })
+            }
         }
 
-        if (timeElapsed >= BASE_SPEED / speedMultiplier) {
-            this.#snake.move(this.#lastDirection)
-            this.#lastMoveTime = currentTime;
-        }
-
-        if (Math.round(Math.random()) && this.#food.length < appleLimit) {
-            this.#food.push({
-                type: FoodType.Apple,
-                position: this.getRandomFreePosition(),
-            })
-        }
 
         requestAnimationFrame(() => this.gameLoop());
     }
