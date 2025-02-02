@@ -78,7 +78,7 @@ export class Game {
     }
 
     changeSnakeDirection(direction: Direction) {
-        if (this.#status === GameStatus.NotStarted) {
+        if ([GameStatus.NotStarted, GameStatus.Paused].includes(this.#status)) {
             this.play();
         }
 
@@ -92,7 +92,7 @@ export class Game {
             [Direction.Right]: verticals,
         }
 
-        if (this.#directionChanged || this.#lastDirection && !allowedDirection[this.#lastDirection].includes(direction)) return;
+        if (this.#directionChanged || !!this.#lastDirection && !allowedDirection[this.#lastDirection].includes(direction)) return;
         this.#directionChanged = true;
         this.#lastDirection = direction;
     }
