@@ -1,7 +1,7 @@
 <script lang="ts">
-	import { app } from './appState.svelte';
+	import { app } from '$lib/logic/appState.svelte';
 
-	let gameTimerSeconds = $derived(Math.max(0, app.game?.time));
+	let gameTimerSeconds = $derived(Math.max(0, app.gameInstance?.time));
 
 	let seconds = $derived(gameTimerSeconds % 60);
 	let minutes = $derived(Math.floor((gameTimerSeconds / 60) % 60));

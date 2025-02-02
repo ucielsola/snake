@@ -1,10 +1,12 @@
 <script lang="ts">
-	import { app } from '$lib/appState.svelte';
-	import BoardWrapper from '$lib/BoardWrapper.svelte';
-	import DirectionKeys from '$lib/DirectionKeys.svelte';
-	import PlayPauseButton from '$lib/PlayPauseButton.svelte';
-	import SnakeStatus from '$lib/SnakeStatus.svelte';
-	import Timer from '$lib/Timer.svelte';
+	import { app } from '$lib/logic/appState.svelte';
+	import {
+		BoardWrapper,
+		DirectionKeys,
+		PlayPauseButton,
+		SnakeStatus,
+		Timer
+	} from '$lib/components';
 
 	app.newGame();
 </script>

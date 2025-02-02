@@ -1,8 +1,8 @@
-import { Direction, type Food, type Position, } from "./types";
-import { FoodType, GameStatus, CollisionType } from "./types";
+import { Direction, type Food, type Position, } from "$lib/types";
+import { FoodType, GameStatus, CollisionType } from "$lib/types";
 
-import { Snake } from "./snake.svelte";
-import { isSamePosition } from "./utils";
+import { Snake } from "$lib/logic";
+import { isSamePosition } from "$lib/utils";
 
 export class Game {
     static ONE_SECOND = 1000;
@@ -34,16 +34,20 @@ export class Game {
         return this.#size;
     }
 
-    get snake() {
-        return this.#snake;
-    }
-
     get food() {
         return this.#food;
     }
 
     get lastDirection() {
         return this.#lastDirection;
+    }
+
+    get eaten() {
+        return this.#snake.foodEaten
+    }
+
+    get snakePosition() {
+        return this.#snake.position;
     }
 
     start() {

@@ -1,10 +1,10 @@
 <script lang="ts">
-	import { app } from './appState.svelte';
-	import DeadSnake from './icons/DeadSnake.svelte';
-	import SlowPotion from './icons/SlowPotion.svelte';
-	import SpeedPotion from './icons/SpeedPotion.svelte';
-	import { Direction, FoodType, GameStatus, type Position } from './types';
-	import { isSamePosition } from './utils';
+	import { app } from '$lib/logic/appState.svelte';
+
+	import { IconDeadSnake, IconSlowPotion, IconFastPotion } from '$lib/components/icons';
+	import { Direction, FoodType, GameStatus, type Position } from '$lib/types';
+
+	import { isSamePosition } from '$lib/utils';
 
 	let {
 		availableHeight,
@@ -16,14 +16,14 @@
 
 	let board: string[][] = createBoard();
 
-	const { game } = app;
+	const { gameInstance } = app;
 
-	game.setBoardSize({
+	gameInstance.setBoardSize({
 		x: board.length,
 		y: board[0].length
 	});
 
-	let lastDirection: Direction = $derived(game.lastDirection);
+	let lastDirection: Direction = $derived(gameInstance.lastDirection);
 
 	let boardElements: {
 		snake: {
@@ -35,12 +35,12 @@
 		apples: Position[];
 	} = $derived({
 		snake: {
-			head: game.snake.position.head,
-			body: game.snake.position.body
+			head: gameInstance.snakePosition.head,
+			body: gameInstance.snakePosition.body
 		},
 		slowPotion: undefined,
 		fastPotion: undefined,
-		apples: game.food.filter((f) => f.type === FoodType.Apple).map((f) => f.position)
+		apples: gameInstance.food.filter((f) => f.type === FoodType.Apple).map((f) => f.position)
 	});
 
 	function createBoard() {
@@ -101,15 +101,15 @@
 	<div class="flex h-full w-full items-center justify-center p-0.5">
 		<div
 			class="flex h-full w-full items-center justify-center rounded-t-xl
-		{game.status === GameStatus.Lost ? 'bg-red-400' : 'bg-green-400'}	
+		{gameInstance.status === GameStatus.Lost ? 'bg-red-400' : 'bg-green-400'}	
 		{lastDirection === Direction.Right && 'rotate-90'}
 		{lastDirection === Direction.Down && 'rotate-180'}
 	    {lastDirection === Direction.Left && 'rotate-270'}
 		"
 		>
-			{#if game.status !== GameStatus.Lost}
+			{#if gameInstance.status !== GameStatus.Lost}
 				<div class="h-4 w-4">
-					<DeadSnake />
+					<IconDeadSnake />
 				</div>
 			{/if}
 		</div>
@@ -119,7 +119,9 @@
 {#snippet SnakeBodyCell()}
 	<div class="flex h-full w-full items-center justify-center p-0.5">
 		<div
-			class="h-full w-full {game.status === GameStatus.Lost ? 'bg-red-400' : 'bg-green-400'}"
+			class="h-full w-full {gameInstance.status === GameStatus.Lost
+				? 'bg-red-400'
+				: 'bg-green-400'}"
 		></div>
 	</div>
 {/snippet}
@@ -129,9 +131,9 @@
 {/snippet}
 
 {#snippet SlowPotionCell()}
-	<div class="flex h-full w-full items-center justify-center"><SlowPotion /></div>
+	<div class="flex h-full w-full items-center justify-center"><IconSlowPotion /></div>
 {/snippet}
 
 {#snippet FastPotionCell()}
-	<div class="flex h-full w-full items-center justify-center"><SpeedPotion /></div>
+	<div class="flex h-full w-full items-center justify-center"><IconFastPotion /></div>
 {/snippet}

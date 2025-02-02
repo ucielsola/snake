@@ -1,11 +1,11 @@
 <script lang="ts">
-	import { app } from './appState.svelte';
-	import BaseButton from './BaseButton.svelte';
-	import PlayPauseKeyIcon from './icons/PlayPauseKeyIcon.svelte';
+	import { app } from '$lib/logic/appState.svelte';
+	import { BaseButton } from '$lib/components';
+	import { IconPause, IconPlay } from '$lib/components/icons';
 
-	import { GameStatus } from './types';
+	import { GameStatus } from '$lib/types';
 
-	const { game } = app;
+	const { gameInstance: game } = app;
 
 	let isPlay = $derived(game.status === GameStatus.Playing);
 	let isPause = $derived(game.status === GameStatus.Paused);
@@ -24,5 +24,9 @@
 <svelte:window onkeydown={onKeydown} />
 
 <BaseButton onPress={() => (isPlay ? onPause() : onPlay())} disabled={!isPause && !isPlay}>
-	<PlayPauseKeyIcon {isPlay} />
+	{#if isPlay}
+		<IconPause />
+	{:else}
+		<IconPlay />
+	{/if}
 </BaseButton>

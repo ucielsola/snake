@@ -8,7 +8,7 @@ export const createApp = () => {
     }
 
     return {
-        get game() {
+        get gameInstance() {
             return game
         },
 

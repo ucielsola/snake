@@ -1,5 +1,3 @@
-import type { Snake } from "./snake.svelte"
-
 export enum GameStatus {
     NotStarted = 0,
     Playing = 1,

@@ -1,5 +1,5 @@
-import { Direction, FoodType, type Position, type Potion } from "./types"
-import { isSamePosition } from "./utils";
+import { Direction, FoodType, type Position, type Potion } from "$lib/types"
+import { isSamePosition } from "$lib/utils";
 
 export class Snake {
     position: {
@@ -10,7 +10,8 @@ export class Snake {
         body: []
     })
 
-    currentFood = $state(new Set<FoodType>())
+    #foodEaten = $state<FoodType[]>([])
+
 
     #currentPotion = $state<Potion | undefined>();
     #lastDirection: Direction = $state()!
@@ -21,6 +22,10 @@ export class Snake {
 
     get lastDirection() {
         return this.#lastDirection;
+    }
+
+    get foodEaten() {
+        return this.#foodEaten;
     }
 
     setInitialPosition(initialPosition: Position) {
@@ -51,7 +56,7 @@ export class Snake {
                 break;
         }
 
-        this.currentFood.add(foodType);
+        this.#foodEaten.push(foodType);
     }
 
     move(direction: Direction) {

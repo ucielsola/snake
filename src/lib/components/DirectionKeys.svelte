@@ -1,12 +1,13 @@
 <script lang="ts">
+	import { app } from '$lib/logic/appState.svelte';
+
+	import { BaseButton } from '$lib/components';
+
+	import { IconDirectionKey } from '$lib/components/icons';
+
 	import { Direction } from '$lib/types';
 
-	import DirectionKeyIcon from '$lib/icons/DirectionKeyIcon.svelte';
-
-	import { app } from './appState.svelte';
-	import BaseButton from './BaseButton.svelte';
-
-	const { game } = app;
+	const { gameInstance } = app;
 
 	let currentDirection = $state<Direction | null>(null);
 
@@ -30,7 +31,7 @@
 	};
 
 	const changeDirection = (direction: Direction) => {
-		game.changeSnakeDirection(direction);
+		gameInstance.changeSnakeDirection(direction);
 	};
 
 	function getDirectionForKey(key: string): Direction | null {
@@ -57,7 +58,7 @@
 		onRelease={() => handleRelease()}
 		disabled={false}
 	>
-		<DirectionKeyIcon key={Direction.Up} />
+		<IconDirectionKey key={Direction.Up} />
 	</BaseButton>
 	<div class="flex items-center gap-2">
 		<BaseButton
@@ -65,21 +66,21 @@
 			onRelease={() => handleRelease()}
 			disabled={false}
 		>
-			<DirectionKeyIcon key={Direction.Left} />
+			<IconDirectionKey key={Direction.Left} />
 		</BaseButton>
 		<BaseButton
 			onPress={() => handleClick(Direction.Down)}
 			onRelease={() => handleRelease()}
 			disabled={false}
 		>
-			<DirectionKeyIcon key={Direction.Down} />
+			<IconDirectionKey key={Direction.Down} />
 		</BaseButton>
 		<BaseButton
 			onPress={() => handleClick(Direction.Right)}
 			onRelease={() => handleRelease()}
 			disabled={false}
 		>
-			<DirectionKeyIcon key={Direction.Right} />
+			<IconDirectionKey key={Direction.Right} />
 		</BaseButton>
 	</div>
 </div>
