@@ -52,11 +52,13 @@
 </script>
 
 <svelte:window onkeydown={handleKeyDown} onkeyup={handleRelease} />
+
 <div class="flex flex-col items-center gap-2">
 	<BaseButton
 		onPress={() => handleClick(Direction.Up)}
 		onRelease={() => handleRelease()}
 		disabled={false}
+		isActive={currentDirection === Direction.Up}
 	>
 		<IconDirectionKey key={Direction.Up} />
 	</BaseButton>
@@ -65,6 +67,7 @@
 			onPress={() => handleClick(Direction.Left)}
 			onRelease={() => handleRelease()}
 			disabled={false}
+			isActive={currentDirection === Direction.Left}
 		>
 			<IconDirectionKey key={Direction.Left} />
 		</BaseButton>
@@ -72,6 +75,7 @@
 			onPress={() => handleClick(Direction.Down)}
 			onRelease={() => handleRelease()}
 			disabled={false}
+			isActive={currentDirection === Direction.Down}
 		>
 			<IconDirectionKey key={Direction.Down} />
 		</BaseButton>
@@ -79,6 +83,7 @@
 			onPress={() => handleClick(Direction.Right)}
 			onRelease={() => handleRelease()}
 			disabled={false}
+			isActive={currentDirection === Direction.Right}
 		>
 			<IconDirectionKey key={Direction.Right} />
 		</BaseButton>
