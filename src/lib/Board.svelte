@@ -1,10 +1,10 @@
 <script lang="ts">
-	import { fade } from 'svelte/transition';
 	import { app } from './appState.svelte';
 	import DeadSnake from './icons/DeadSnake.svelte';
 	import SlowPotion from './icons/SlowPotion.svelte';
 	import SpeedPotion from './icons/SpeedPotion.svelte';
 	import { Direction, FoodType, GameStatus, type Position } from './types';
+	import { isSamePosition } from './utils';
 
 	let {
 		availableHeight,
@@ -66,16 +66,22 @@
 		{#each board as col, collIdx (collIdx)}
 			<div class="flex flex-col">
 				{#each col as _, cellIdx (cellIdx)}
+					{@const [position] = [
+						{
+							x: collIdx,
+							y: cellIdx
+						}
+					]}
 					<div class="h-6 w-6 border {(collIdx + cellIdx) % 2 === 0 && 'bg-slate-50'}">
-						{#if boardElements.snake.head.x === collIdx && boardElements.snake.head.y === cellIdx}
+						{#if isSamePosition(position, boardElements.snake.head)}
 							{@render SnakeHeadCell()}
-						{:else if boardElements.snake.body.some((b) => b.x === collIdx && b.y === cellIdx)}
+						{:else if boardElements.snake.body.find((b) => isSamePosition(position, b))}
 							{@render SnakeBodyCell()}
-						{:else if !!boardElements.apples.find((b) => b.x === collIdx && b.y === cellIdx)}
+						{:else if !!boardElements.apples.find((b) => isSamePosition(position, b))}
 							{@render AppleCell()}
-						{:else if boardElements.slowPotion && boardElements.slowPotion.x === collIdx && boardElements.slowPotion.y === cellIdx}
+						{:else if boardElements.slowPotion && isSamePosition(position, boardElements.slowPotion)}
 							{@render SlowPotionCell()}
-						{:else if boardElements.fastPotion && boardElements.fastPotion.x === collIdx && boardElements.fastPotion.y === cellIdx}
+						{:else if boardElements.fastPotion && isSamePosition(position, boardElements.fastPotion)}}
 							{@render FastPotionCell()}
 						{:else}
 							{@render EmptyCell()}
@@ -113,15 +119,13 @@
 {#snippet SnakeBodyCell()}
 	<div class="flex h-full w-full items-center justify-center p-0.5">
 		<div
-			class="h-full w-full
-		{game.status === GameStatus.Lost ? 'bg-red-400' : 'bg-green-400'}	
-		"
+			class="h-full w-full {game.status === GameStatus.Lost ? 'bg-red-400' : 'bg-green-400'}"
 		></div>
 	</div>
 {/snippet}
 
 {#snippet AppleCell()}
-	<div class="flex h-full w-full items-center justify-center" in:fade>🍎</div>
+	<div class="flex h-full w-full items-center justify-center">🍎</div>
 {/snippet}
 
 {#snippet SlowPotionCell()}
