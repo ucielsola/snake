@@ -30,7 +30,9 @@
 						<DirectionKeys />
 					</div>
 					<div class="w-2/12">
-						<PlayPauseButton />
+						<div class="hidden sm:block">
+							<PlayPauseButton />
+						</div>
 					</div>
 				</div>
 				<div class="flex w-2/12 items-center justify-center">

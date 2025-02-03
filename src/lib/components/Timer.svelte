@@ -7,8 +7,10 @@
 	let minutes = $derived(Math.floor((gameTimerSeconds / 60) % 60));
 </script>
 
-<div class="flex w-fit gap-1 rounded border p-4 text-3xl font-medium inset-shadow-sm">
-	{@render TimeUnit(minutes)} <span>:</span>
+<div
+	class="flex w-fit flex-col gap-1 rounded border p-1 text-xl font-medium inset-shadow-sm sm:flex-row sm:p-4 sm:text-3xl"
+>
+	{@render TimeUnit(minutes)} <span class="hidden sm:block">:</span>
 	{@render TimeUnit(seconds)}
 </div>
 

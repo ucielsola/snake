@@ -6,26 +6,21 @@
 	import SlowPotion from './icons/SlowPotion.svelte';
 
 	const { gameInstance } = app;
-
-	let remainingTime = $derived(Math.ceil(gameInstance?.remainingPotionTime || 0));
 </script>
 
 {#if !!gameInstance.currentPotion}
-	<div class="flex flex-col items-center justify-center gap-2" transition:fade>
+	<div class="-mt-16 ml-12 flex flex-col items-center justify-center gap-2 sm:m-0" transition:fade>
 		{#if gameInstance.currentPotion === FoodType.FastPotion}
-			<div class="h-16 w-16 animate-pulse">
+			<div class="h-8 w-8 animate-pulse sm:h-16 sm:w-16">
 				<FastPotion />
 			</div>
 
-			<span> Double Speed! </span>
+			<span class="text-[12px] whitespace-nowrap sm:text-sm"> Double Speed! </span>
 		{:else if gameInstance.currentPotion === FoodType.SlowPotion}
-			<div class="h-16 w-16 animate-pulse">
+			<div class="h-8 w-8 animate-pulse sm:h-16 sm:w-16">
 				<SlowPotion />
 			</div>
-			<span> Half Speed! </span>
+			<span class="text-[12px] whitespace-nowrap sm:text-sm"> Half Speed! </span>
 		{/if}
-		<div class="mt-2">
-			{remainingTime ? `-${remainingTime}` : ''}
-		</div>
 	</div>
 {/if}
