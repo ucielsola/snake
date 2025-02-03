@@ -1,10 +1,11 @@
 <script lang="ts">
 	import { app } from '$lib/logic/appState.svelte';
 
-	import { IconDeadSnake, IconSlowPotion, IconFastPotion } from '$lib/components/icons';
+	import { IconDeadSnake, IconSlowPotion, IconFastPotion, IconApple } from '$lib/components/icons';
 	import { Direction, FoodType, GameStatus, type Position } from '$lib/types';
 
 	import { isSamePosition } from '$lib/utils';
+	import { fade } from 'svelte/transition';
 
 	let {
 		availableHeight,
@@ -30,16 +31,16 @@
 			head: Position;
 			body: Position[];
 		};
-		slowPotion?: Position;
-		fastPotion?: Position;
+		slowPotion: Position | null;
+		fastPotion: Position | null;
 		apples: Position[];
 	} = $derived({
 		snake: {
 			head: gameInstance.snakePosition.head,
 			body: gameInstance.snakePosition.body
 		},
-		slowPotion: undefined,
-		fastPotion: undefined,
+		slowPotion: gameInstance.food.find((f) => f.type === FoodType.SlowPotion)?.position ?? null,
+		fastPotion: gameInstance.food.find((f) => f.type === FoodType.FastPotion)?.position ?? null,
 		apples: gameInstance.food.filter((f) => f.type === FoodType.Apple).map((f) => f.position)
 	});
 
@@ -76,7 +77,7 @@
 							y: cellIdx
 						}
 					]}
-					<div class="h-6 w-6 border {(collIdx + cellIdx) % 2 === 0 && 'bg-slate-50'}">
+					<div class="relative h-6 w-6 border {(collIdx + cellIdx) % 2 === 0 && 'bg-slate-50'}">
 						{#if isSamePosition(position, boardElements.snake.head)}
 							{@render SnakeHeadCell()}
 						{:else if boardElements.snake.body.find((b) => isSamePosition(position, b))}
@@ -85,7 +86,7 @@
 							{@render AppleCell()}
 						{:else if boardElements.slowPotion && isSamePosition(position, boardElements.slowPotion)}
 							{@render SlowPotionCell()}
-						{:else if boardElements.fastPotion && isSamePosition(position, boardElements.fastPotion)}}
+						{:else if boardElements.fastPotion && isSamePosition(position, boardElements.fastPotion)}
 							{@render FastPotionCell()}
 						{:else}
 							{@render EmptyCell()}
@@ -98,11 +99,11 @@
 </div>
 
 {#snippet EmptyCell()}
-	<div class="flex h-full w-full items-center justify-center"></div>
+	<div class="z-0 flex h-full w-full items-center justify-center"></div>
 {/snippet}
 
 {#snippet SnakeHeadCell()}
-	<div class="flex h-full w-full items-center justify-center p-0.5">
+	<div class="z-10 flex h-full w-full items-center justify-center p-0.5">
 		<div
 			class="flex h-full w-full items-center justify-center rounded-t-xl
 		{gameInstance.status === GameStatus.Lost ? 'bg-red-400' : 'bg-green-400'}	
@@ -121,7 +122,7 @@
 {/snippet}
 
 {#snippet SnakeBodyCell()}
-	<div class="flex h-full w-full items-center justify-center p-0.5">
+	<div class="z-10 flex h-full w-full items-center justify-center p-0.5">
 		<div
 			class="h-full w-full {gameInstance.status === GameStatus.Lost
 				? 'bg-red-400'
@@ -131,13 +132,19 @@
 {/snippet}
 
 {#snippet AppleCell()}
-	<div class="flex h-full w-full items-center justify-center">🍎</div>
+	<div class="z-10 flex h-full w-full items-center justify-center" in:fade>
+		<IconApple />
+	</div>
 {/snippet}
 
 {#snippet SlowPotionCell()}
-	<div class="flex h-full w-full items-center justify-center"><IconSlowPotion /></div>
+	<div class="z-10 flex h-full w-full items-center justify-center" in:fade>
+		<IconSlowPotion />
+	</div>
 {/snippet}
 
 {#snippet FastPotionCell()}
-	<div class="flex h-full w-full items-center justify-center"><IconFastPotion /></div>
+	<div class="z-10 flex h-full w-full items-center justify-center" in:fade>
+		<IconFastPotion />
+	</div>
 {/snippet}

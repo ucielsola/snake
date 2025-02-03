@@ -87,6 +87,10 @@ export class Snake {
         });
     }
 
+    resetPotion() {
+        this.#currentPotion = undefined;
+    }
+
 
     isBodyPosition(position: Position): boolean {
         return !!this.position.body.find((p) => isSamePosition(p, position))

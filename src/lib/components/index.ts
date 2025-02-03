@@ -3,8 +3,9 @@ import { default as Board } from './Board.svelte';
 import { default as BoardWrapper } from './BoardWrapper.svelte';
 import { default as DirectionKeys } from './DirectionKeys.svelte';
 import { default as PlayPauseButton } from './PlayPauseButton.svelte';
-import { default as SnakeStatus } from './SnakeStatus.svelte';
+import { default as Score } from './Score.svelte';
 import { default as Timer } from './Timer.svelte';
+import { default as CurrentPotion } from './CurrentPotion.svelte';
 
 export {
     BaseButton,
@@ -12,6 +13,7 @@ export {
     BoardWrapper,
     DirectionKeys,
     PlayPauseButton,
-    SnakeStatus,
+    Score,
     Timer,
+    CurrentPotion
 }

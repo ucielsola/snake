@@ -5,7 +5,7 @@
 
 	import { FoodType } from '$lib/types';
 
-	const { gameInstance: game } = app;
+	const { gameInstance } = app;
 </script>
 
 <div class="flex flex-col gap-4">
@@ -16,7 +16,7 @@
 				<IconApple />
 			</div>
 			<span>
-				: {game.eaten.filter((f) => f === FoodType.Apple).length || '--'}
+				: {gameInstance.eaten.filter((f) => f === FoodType.Apple).length || '--'}
 			</span>
 		</div>
 
@@ -25,7 +25,7 @@
 				<IconSlowPotion />
 			</div>
 			<span>
-				: {game.eaten.filter((f) => f === FoodType.SlowPotion).length || '--'}
+				: {gameInstance.eaten.filter((f) => f === FoodType.SlowPotion).length || '--'}
 			</span>
 		</div>
 
@@ -34,7 +34,7 @@
 				<IconFastPotion />
 			</div>
 			<span>
-				: {game.eaten.filter((f) => f === FoodType.FastPotion).length || '--'}
+				: {gameInstance.eaten.filter((f) => f === FoodType.FastPotion).length || '--'}
 			</span>
 		</div>
 	</div>

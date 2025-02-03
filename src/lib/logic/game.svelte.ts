@@ -15,6 +15,8 @@ export class Game {
     #gameInitTime = performance.now();
     #lastDirection: Direction = $state(null!);
     #directionChanged: boolean = false;
+    #lastPotionTime: number | null = $state(null)
+    #remainingPotionTime: number | null = $state(null)
 
     constructor() {
         this.#snake = new Snake();
@@ -28,6 +30,10 @@ export class Game {
 
     get time() {
         return this.#time;
+    }
+
+    get remainingPotionTime() {
+        return this.#remainingPotionTime || 0 / 1000;
     }
 
     get size() {
@@ -48,6 +54,10 @@ export class Game {
 
     get snakePosition() {
         return this.#snake.position;
+    }
+
+    get currentPotion() {
+        return this.#snake.currentPotion;
     }
 
     play() {
@@ -145,11 +155,14 @@ export class Game {
             }
         }
 
+        if (!foodType) return;
+
         this.#food = newFoodList
 
-        if (foodType) {
-            this.#snake.eat(foodType, this.#lastDirection)
-        }
+        const isPotion = [FoodType.SlowPotion, FoodType.FastPotion].includes(foodType)
+
+        this.#lastPotionTime = isPotion ? performance.now() : Number(this.#lastPotionTime) + 0;
+        this.#snake.eat(foodType, this.#lastDirection)
     }
 
     private getRandomFreePosition(): Position {
@@ -178,40 +191,62 @@ export class Game {
 
     private gameLoop() {
         if (this.#status === GameStatus.Playing) {
-            const BASE_SPEED = 500
+            const baseSpeed = 500;
+            const appleLimit = 3;
+            const fastPotionLimit = 1
+            const slowPotionLimit = 1;
+            const potionDuration = 10000;
+
+            const canAddApples = this.#food.filter(f => f.type === FoodType.Apple).length < appleLimit
+            const canAddSlowPotions = this.currentPotion !== FoodType.SlowPotion && this.#food.filter(f => f.type === FoodType.SlowPotion).length < slowPotionLimit
+            const canAddFastPotions = this.currentPotion !== FoodType.FastPotion && this.#food.filter(f => f.type === FoodType.FastPotion).length < fastPotionLimit
 
             const currentTime = performance.now();
-            const speedMultiplier = 1 + Math.log(this.#snake.position.body.length + 1);
+            const potionMultiplier = this.currentPotion === FoodType.FastPotion ? 2 : this.currentPotion === FoodType.SlowPotion ? 0.5 : 1;
+            const speedMultiplier = 1 + Math.log(((this.#snake.position.body.length + 1)));
             const timeElapsed = currentTime - this.#lastMoveTime;
-            const appleLimit = 3;
-            const potionLimit = 1;
-            const poisonLimit = 1;
+            const timeSinceLastPotion = this.#lastPotionTime ? currentTime - this.#lastPotionTime : 0;
 
             if (this.#status === GameStatus.Playing) {
                 this.#time = Math.floor((currentTime - this.#gameInitTime) / 1000);
             }
 
-            if (timeElapsed >= BASE_SPEED / speedMultiplier) {
+            if (this.#lastPotionTime) {
+                this.#remainingPotionTime = Math.max(0, 10 - timeSinceLastPotion / 1000);
+            }
+
+            if (timeSinceLastPotion >= potionDuration) {
+                this.#snake.resetPotion()
+                this.#lastPotionTime = null;
+            }
+
+            if (timeElapsed >= baseSpeed / speedMultiplier / potionMultiplier) {
                 this.#snake.move(this.#lastDirection)
                 this.#directionChanged = false;
                 this.#lastMoveTime = currentTime;
             }
 
-            if (Math.round(Math.random()) && this.#food.length < appleLimit) {
+            if (Math.round(Math.random()) && canAddApples) {
                 this.#food.push({
                     type: FoodType.Apple,
                     position: this.getRandomFreePosition(),
                 })
             }
 
-            if (Math.round(Math.random()) && this.#food.length < potionLimit) {
+            if (Math.round(Math.random()) && canAddSlowPotions) {
+                this.#food.push({
+                    type: FoodType.SlowPotion,
+                    position: this.getRandomFreePosition(),
+                })
+            }
+
+            if (Math.round(Math.random()) && canAddFastPotions) {
                 this.#food.push({
                     type: FoodType.FastPotion,
                     position: this.getRandomFreePosition(),
                 })
             }
         }
-
 
         requestAnimationFrame(() => this.gameLoop());
     }
