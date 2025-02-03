@@ -11,10 +11,9 @@ export class Snake {
     })
 
     #foodEaten = $state<FoodType[]>([])
-
-
     #currentPotion = $state<Potion | undefined>();
     #lastDirection: Direction = $state()!
+    #boundaries: Position = null!
 
     get currentPotion() {
         return this.#currentPotion;
@@ -30,6 +29,10 @@ export class Snake {
 
     setInitialPosition(initialPosition: Position) {
         this.position.head = initialPosition;
+    }
+
+    setBoundaries(boundaries: Position) {
+        this.#boundaries = boundaries;
     }
 
     changeDirection(newDirection: Direction) {
@@ -60,20 +63,21 @@ export class Snake {
     }
 
     move(direction: Direction) {
+        console.log(this.#boundaries)
         const currentHead = { ...this.position.head };
 
         switch (direction) {
             case Direction.Up:
-                this.position.head.y -= 1;
+                this.position.head.y = (this.position.head.y - 1 + this.#boundaries.y) % this.#boundaries.y;
                 break;
             case Direction.Right:
-                this.position.head.x += 1;
+                this.position.head.x = (this.position.head.x + 1) % this.#boundaries.x;
                 break;
             case Direction.Down:
-                this.position.head.y += 1;
+                this.position.head.y = (this.position.head.y + 1) % this.#boundaries.y;
                 break;
             case Direction.Left:
-                this.position.head.x -= 1;
+                this.position.head.x = (this.position.head.x - 1 + this.#boundaries.x) % this.#boundaries.x;
                 break;
         }
 
@@ -90,7 +94,6 @@ export class Snake {
     resetPotion() {
         this.#currentPotion = undefined;
     }
-
 
     isBodyPosition(position: Position): boolean {
         return !!this.position.body.find((p) => isSamePosition(p, position))

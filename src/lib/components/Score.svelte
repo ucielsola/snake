@@ -6,6 +6,10 @@
 	import { FoodType } from '$lib/types';
 
 	const { gameInstance } = app;
+
+	let apples = $derived(gameInstance.eaten?.filter((f) => f === FoodType.Apple)?.length);
+	let slowPotions = $derived(gameInstance.eaten?.filter((f) => f === FoodType.SlowPotion)?.length);
+	let fastPotions = $derived(gameInstance.eaten?.filter((f) => f === FoodType.FastPotion)?.length);
 </script>
 
 <div class="flex flex-col gap-4">
@@ -16,7 +20,7 @@
 				<IconApple />
 			</div>
 			<span>
-				: {gameInstance.eaten.filter((f) => f === FoodType.Apple).length || '--'}
+				: {apples || '--'}
 			</span>
 		</div>
 
@@ -25,7 +29,7 @@
 				<IconSlowPotion />
 			</div>
 			<span>
-				: {gameInstance.eaten.filter((f) => f === FoodType.SlowPotion).length || '--'}
+				: {slowPotions || '--'}
 			</span>
 		</div>
 
@@ -34,7 +38,7 @@
 				<IconFastPotion />
 			</div>
 			<span>
-				: {gameInstance.eaten.filter((f) => f === FoodType.FastPotion).length || '--'}
+				: {fastPotions || '--'}
 			</span>
 		</div>
 	</div>

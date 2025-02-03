@@ -81,6 +81,8 @@ export class Game {
     setBoardSize(size: Position) {
         this.#size = size;
 
+        this.#snake.setBoundaries(size);
+
         this.#snake.setInitialPosition({
             x: Math.round(size.x / 2),
             y: Math.round(size.y / 2),
